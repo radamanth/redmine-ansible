@@ -1,7 +1,7 @@
 ---
 galaxy_info:
   author: Radamanth 
-  description: Ansible lover
+  description: Install redmine why an admin user on an ubuntu trusty behond an apache2 reverse proxy (https)
   company: www.neovia.fr
   license: GPLv2
   min_ansible_version: 1.4
