@@ -1,0 +1,4 @@
+---
+- name: radamanth.mysql-ansible 
+  src: radamanth.mysql-ansible
+

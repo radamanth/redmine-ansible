@@ -1,0 +1,18 @@
+---
+galaxy_info:
+  author: Radamanth 
+  description: Ansible lover
+  company: www.neovia.fr
+  license: GPLv2
+  min_ansible_version: 1.4
+  platforms:
+  - name: Ubuntu
+    versions:
+    - trusty
+  categories:
+  - database
+  - database:sql
+  - development
+  - web
+dependencies: [radamanth.mysql-ansible]
+  

@@ -1,0 +1,105 @@
+---
+- name: Apt-get update
+  apt: name="software-properties-common" update_cache=yes state=present
+
+- name: Redmine | Set debconf vars  redmine root passwd 
+  shell: sudo echo redmine redmine/instances/default/mysql/admin-pass password {{mysql_root_passwd}} | sudo /usr/bin/debconf-set-selections
+
+- name: Redmine |set Debocnf vars redmine/instances/default/db/app-user
+  shell: sudo echo redmine redmine/instances/default/db/app-user    string  {{redmine_db_login}} | sudo /usr/bin/debconf-set-selections
+
+- name: Redmine | Set debconf vars  redmine app-pass passwd
+  shell: sudo echo redmine redmine/instances/default/mysql/app-pass password {{redmine_db_passwd}} | sudo /usr/bin/debconf-set-selections
+
+- name: Redmine | Set debconf vars redmine db types
+  shell: sudo echo redmine redmine/instances/default/database-type select mysql | sudo /usr/bin/debconf-set-selections
+
+- name: Redmine | Set debconf vars  redmine db name
+  shell: sudo echo redmine redmine/instances/default/db/dbname  string  {{redmine_db_name}} | sudo /usr/bin/debconf-set-selections
+
+- name: Install Redmine dependencies for mysql
+  apt: name={{item}} state=installed
+  with_items: 
+  - apache2
+  - software-properties-common
+  - ruby1.9.3
+  - ruby-rmagick 
+  - libapache2-mod-passenger
+  - python-mysqldb
+
+# MYSQL
+- name: Start the MySQL service
+  service: name=mysql state=started
+
+- name: Create your database for redmine installation.
+  mysql_db: name={{redmine_db_name}}  login_user=root login_password={{mysql_root_passwd}} state=present
+
+- name: Create redmine database users and grant access to redmine_db_name
+  mysql_user: name="{{redmine_db_login}}" host={{item}}  password="{{redmine_db_passwd }}" login_user="root"  login_password={{mysql_root_passwd}} priv="{{redmine_db_name}}.*:ALL" state=present
+  with_items:
+  - 127.0.0.1
+  - ::1
+  - localhost
+
+- name: Install redmine 
+  apt: name={{item}} state=installed
+  with_items:
+  - redmine
+  - redmine-mysql
+
+- name: gem install bundler 
+  command: gem install bundler  
+
+- name: Edit conf.d/security
+  replace: backup=yes dest=/etc/apache2/conf-available/security.conf regexp='ServerTokens\ OS' replace='ServerTokens Prod' 
+
+- name: change redmine directory owner to www-data
+  command: chown -R www-data:www-data /usr/share/redmine
+
+
+- name: Change admin default account
+  shell: chdir="/usr/share/redmine" ruby script/rails runner -e production 'user = User.find(:first, :conditions => {:admin => true}) ; user.mail="{{redmine_admin_mail}}"; user.salt_password("{{redmine_admin_passwd}}"); user.save!'
+
+- name: template redmine setting.yml
+  template: src=settings.yml dest=/usr/share/redmine/config/settings.yml backup=yes
+
+- name: copy configuration.yml to /etc/redmine/default ...
+  copy: src=configuration.yml dest=/etc/redmine/default/configuration.yml
+
+# Apache 
+- name: Create apache2 ssl Directory
+  file: path=/etc/apache2/ssl state=directory owner=root group=root mode=0755 
+
+- name: Create self-signed certificate.
+  command: openssl req -new -nodes -x509 -subj "{{ redmine_self_signed_cert_subj }}" -days 3650 -keyout /etc/apache2/ssl/redmine.key -out /etc/apache2/ssl/redmine.crt -extensions v3_ca
+    creates=/etc/apache2/ssl/redmine.key
+
+
+- name: Templating apache2.vhost.conf
+  template: src={{item.src}} dest={{item.dest}} backup=yes
+  with_items:
+  - {src: redmine.conf , dest: '/etc/apache2/sites-available/redmine.conf'}
+  - {src: redmine-redirect.conf , dest: '/etc/apache2/sites-available/redmine-redirect.conf'}
+
+
+- name: Enablee security.conf
+  command: a2enconf security
+
+- name: Enable mod for apache2
+  command: a2enmod {{item}}
+  with_items:
+  - passenger
+  - rewrite
+  - proxy
+  - proxy_http
+  - ssl
+
+- name: Enable Redmine Apache 2 site
+  command: a2ensite redmine.conf
+
+- name: Enable Redmine https redirect
+  command: a2ensite redmine-redirect.conf
+
+- name: Restart apache
+  service: name=apache2 state=restarted
+ 

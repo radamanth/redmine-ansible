@@ -1,0 +1,23 @@
+---
+# Mysql user for redmine
+redmine_db_login: redmine
+# Password of redmine_db_login
+redmine_db_passwd: "redminedbpasswd"
+# Database name for redmine
+redmine_db_name: redmine_yourcompany
+
+# The default admin user that will be set on your redmine installation
+redmine_admin_login: admin
+redmine_admin_passwd: "redmine"
+redmine_admin_mail: youradmin@yourdomain.com 
+
+# Mail that will be set on the from field whend Redmine send notificaitons
+redmine_mail_from: yourmailfrom@yourdomain.com
+
+redmine_domain: "redmine.yourdomain.com"
+# You could also use a domain set in your inventory file, 
+# ex : redmine_domain: "{{ hostvars[groups['redmine_server'][0]]['red_domain'] }}"
+# will use the red_domain property of the first host defined in a group remdine_server
+
+# Slef Signed certficate subject
+redmine_self_signed_cert_subj: "/C=FR/ST=France/L=Toulouse/O=IT/CN={{redmine_domain}}"
