@@ -10,8 +10,6 @@ galaxy_info:
     versions:
     - trusty
   categories:
-  - database
-  - database:sql
   - development
   - web
 dependencies: [radamanth.mysql-ansible]
