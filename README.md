@@ -12,6 +12,7 @@ Target platform should be an ubuntu with apt-get capabilities
 Role Variables
 --------------
 
+```
 # Mysql user for redmine
 redmine_db_login: redmine
 # Password of redmine_db_login
@@ -31,6 +32,8 @@ redmine_domain: "redmine.yourdomain.com"
 # You could also use a domain set in your inventory file, 
 # ex : redmine_domain: "{{ hostvars[groups['redmine_server'][0]]['red_domain'] }}"
 # will use the red_domain property of the first host defined in a group remdine_server
+
+```
 
 Dependencies
 ------------
