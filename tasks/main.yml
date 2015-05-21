@@ -26,6 +26,11 @@
   - ruby-rmagick 
   - libapache2-mod-passenger
   - python-mysqldb
+  
+- name: Install Sendmail for Redmine
+  apt: pkg={{ item }} state=installed update_cache=yes force=yes
+  with_items:
+    - sendmail
 
 # MYSQL
 - name: Start the MySQL service
