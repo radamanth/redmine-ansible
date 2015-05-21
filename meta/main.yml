@@ -12,5 +12,7 @@ galaxy_info:
   categories:
   - development
   - web
-dependencies: [radamanth.mysql-ansible]
+dependencies: 
+  - { role: 'radamanth.mysql-ansible', version: '1.0.1'  }
+
   
