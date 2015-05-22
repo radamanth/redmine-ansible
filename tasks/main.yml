@@ -33,6 +33,10 @@
     - sendmail
 
 # MYSQL
+
+- name: Stop the MySQL service
+  service: name=mysql state=stopped
+
 - name: Start the MySQL service
   service: name=mysql state=started
 
@@ -45,6 +49,12 @@
   - 127.0.0.1
   - ::1
   - localhost
+
+- name: Stop the MySQL service
+  service: name=mysql state=stopped
+
+- name: Start the MySQL service
+  service: name=mysql state=started
 
 - name: Install redmine 
   apt: name={{item}} state=installed
@@ -60,7 +70,6 @@
 
 - name: change redmine directory owner to www-data
   command: chown -R www-data:www-data /usr/share/redmine
-
 
 - name: Change admin default account
   shell: chdir="/usr/share/redmine" ruby script/rails runner -e production 'user = User.find(:first, :conditions => {:admin => true}) ; user.mail="{{redmine_admin_mail}}"; user.salt_password("{{redmine_admin_passwd}}"); user.save!'

@@ -1,4 +1,5 @@
 ---
 - name: radamanth.mysql-ansible 
   src: radamanth.mysql-ansible
+  version: 1.0.4
 
