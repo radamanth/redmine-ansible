@@ -82,11 +82,13 @@
 
 # Apache 
 - name: Create apache2 ssl Directory
-  file: path=/etc/apache2/ssl state=directory owner=root group=root mode=0755 
+  file: path={{redmine_ssl_dir}} state=directory owner=root group=root mode=0755 
 
 - name: Create self-signed certificate.
-  command: openssl req -new -nodes -x509 -subj "{{ redmine_self_signed_cert_subj }}" -days 3650 -keyout /etc/apache2/ssl/redmine.key -out /etc/apache2/ssl/redmine.crt -extensions v3_ca
+  command: openssl req -new -nodes -x509 -subj "{{ redmine_self_signed_cert_subj }}" -days 3650 -keyout {{redmine_ssl_privkey_path}} -out {{redmine_ssl_pem_path}} -extensions v3_ca
     creates=/etc/apache2/ssl/redmine.key
+  when: redmine_self_signed 
+
 
 
 - name: Templating apache2.vhost.conf

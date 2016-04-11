@@ -33,6 +33,17 @@ redmine_domain: "redmine.yourdomain.com"
 # ex : redmine_domain: "{{ hostvars[groups['redmine_server'][0]]['red_domain'] }}"
 # will use the red_domain property of the first host defined in a group remdine_server
 
+# Self Signed certficate subject
+# Shall we generate self signed certificate
+redmine_self_signed: true
+redmine_self_signed_cert_subj: "/C=FR/ST=France/L=Toulouse/O=IT/CN={{redmine_domain}}"
+
+# SSL certificate path
+redmine_ssl_dir: "/etc/ssl"
+redmine_ssl_pem_path: "{{redmine_ssl_dir}}/redmine.pem"
+redmine_ssl_privkey_path: "{{redmine_ssl_dir}}/redmine.priv"
+redmine_ssl_chain_path:  "{{redmine_ssl_dir}}/redmine.chain"
+
 ```
 
 Dependencies

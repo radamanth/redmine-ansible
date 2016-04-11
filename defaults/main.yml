@@ -20,4 +20,12 @@ redmine_domain: "redmine.yourdomain.com"
 # will use the red_domain property of the first host defined in a group remdine_server
 
 # Slef Signed certficate subject
+redmine_self_signed: true
 redmine_self_signed_cert_subj: "/C=FR/ST=France/L=Toulouse/O=IT/CN={{redmine_domain}}"
+
+# SSL certifacte path
+redmine_ssl_dir: "/etc/ssl"
+redmine_ssl_pem_path: "{{redmine_ssl_dir}}/redmine.pem" 
+redmine_ssl_privkey_path: "{{redmine_ssl_dir}}/redmine.priv"
+redmine_ssl_chain_path:  "{{redmine_ssl_dir}}/redmine.chain" 
+
